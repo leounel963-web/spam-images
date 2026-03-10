@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<title>Images aléatoires</title>
+
+<style>
+  body {
+    background-color: #AAAAAA;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  #btn {
+    font-size: 40px;
+    padding: 20px;
+    font-family: MV Boli, Verdana, sans-serif;
+    position: relative;
+    z-index: 10;
+  }
+
+  .img-random {
+    position: absolute;
+  }
+</style>
+
+</head>
+<body>
+
+<div style="text-align:center; margin-top:40px;">
+  <button id="btn" onclick="ajouterImage()">AAAAAAAAAAAAAAA</button>
+</div>
+
+<script>
+function ajouterImage() {
+  const btn = document.getElementById("btn");
+  const btnRect = btn.getBoundingClientRect();
+
+  const audio = new Audio("https://www.myinstants.com/media/sounds/vine-boom.mp3");
+  audio.play();
+
+  const img = document.createElement("img");
+  img.src = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIF.qTeu1f%252bU7WF%252fs3rMUpGtUg%26pid%3DApi&f=1&ipt=9af55e351f9fcec889a1dcff21d2d84e352477dbba1f4ae8c6663aa3ef6c21b4&ipo=images";
+  img.className = "img-random";
+
+  const imgWidth = 150;
+  const imgHeight = 350;
+
+  img.style.width = imgWidth + "px";
+  img.style.height = imgHeight + "px";
+
+  document.body.appendChild(img);
+
+  let x, y;
+  let tries = 0;
+
+  do {
+    x = Math.random() * Math.max(0, window.innerWidth - imgWidth);
+    y = Math.random() * Math.max(0, window.innerHeight - imgHeight);
+
+    tries++;
+    if (tries > 50) break;
+
+  } while (
+    x < btnRect.right + 50 &&
+    x + imgWidth > btnRect.left - 50 &&
+    y < btnRect.bottom + 50 &&
+    y + imgHeight > btnRect.top - 50
+  );
+
+  img.style.left = x + "px";
+  img.style.top = y + "px";
+}
+</script>
+
+</body>
+</html>
