@@ -3,93 +3,164 @@
 <head>
 <title>Images aléatoires</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
   body {
     background-color: #AAAAAA;
     height: 100vh;
     margin: 0;
     overflow: hidden;
+    font-family: Arial, sans-serif;
   }
 
-  #btn {
-    font-size: 40px;
-    padding: 20px;
-    font-family: MV Boli, Verdana, sans-serif;
-    position: relative;
-    z-index: 10;
+  .btn {
+    font-size: 28px;
+    padding: 16px 28px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    margin: 5px;
+    transition: 0.2s;
+    box-shadow: 0 0 12px rgba(255,255,255,0.4);
+  }
+
+  .btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 18px rgba(255,255,255,0.7);
+  }
+
+  #btn-normal {
+    background: linear-gradient(45deg, #ff4d4d, #ff9900);
+  }
+
+  #btn-folie {
+    background: linear-gradient(45deg, #6a00ff, #ff00c8);
+  }
+
+  #btn-gravite {
+    background: linear-gradient(45deg, #00c3ff, #00ff88);
+  }
+
+  #top-bar {
+    text-align:center;
+    margin-top:20px;
+  }
+
+  #compteur {
+    font-size: 26px;
+    margin-top: 10px;
+    font-weight: bold;
   }
 
   .img-random {
     position: absolute;
+    transition: transform 0.3s, top 1s linear;
+  }
+
+  .img-random:hover {
+    transform: rotate(10deg) scale(1.1);
   }
 </style>
 
 </head>
 <body>
 
-<div style="text-align:center; margin-top:40px;">
-  <button id="btn" onclick="ajouterImage()">AAAAAAAAAAAAAAA</button>
+<div id="top-bar">
+  <button id="btn-normal" class="btn" onclick="ajouterImage()">CLIQUE</button>
+  <button id="btn-folie" class="btn" onclick="modeFolie()">FOLIE</button>
+  <button id="btn-gravite" class="btn" onclick="modeGravite()">GRAVITÉ</button>
+  <div id="compteur">Clics : 0</div>
 </div>
 
 <script>
+let clics = 0;
+let folieActive = false;
+let intervalFolie = null;
+let graviteActive = false;
 
 const sons = [
   "https://www.myinstants.com/media/sounds/bonk-sound-effect.mp3",
   "https://www.myinstants.com/media/sounds/windows-xp-error.mp3", 
   "https://www.myinstants.com/media/sounds/cartoon-slip.mp3",
   "https://www.myinstants.com/media/sounds/quack_2.mp3",
-  "https://www.myinstants.com/media/sounds/among-us-role-reveal.mp3"
+  "https://www.myinstants.com/media/sounds/thud.mp3"
 ];
 
-
 const images = [
-  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.M-zQRPiEjhNVvpOd1IJPNQHaEK%3Fpid%3DApi&f=1&ipt=269048561024604948f161cc7c03b305db944845a42fbc9dc219d02f48ba8b93&ipo=images", 
-  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.RD2uM5G7XZBx2ZqTGrxOAAHaEK%3Fpid%3DApi&f=1&ipt=a64968a7e132368ab7ea7e1e630d93568a2f4347a4e6dc179d63fa04bb6c4bce&ipo=images", 
-  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.5xVv9FU1ZMXUjO8RCY2YMAHaHZ%3Fpid%3DApi&f=1&ipt=9acea44f8a1dbe18f54c5815caf583a9b4ff943efcb8493650fb1a0b2441ba44&ipo=images",
-  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftx-br-pic.kwai.net%2Fkimg%2FEKzM1y8qmgEKAnMzEg1waG90by1vdmVyc2VhGoQBdXBpYy8yMDIyLzA5LzIxLzIyL0JNakF5TWpBNU1qRXlNak01TWpGZk1UVXdNREF4TXpZME16RXlOamszWHpFMU1ERXdNRGcxTnpNek9UUTVNbDh5WHpNPV9vZmZuX0JhMTc0YWZlZDk2MjBlNzE1MDdlODRhOGQyZGYwYmUyYS53ZWJw.webp&f=1&nofb=1&ipt=82017e68e4ac37d2baea1f562b614759fc6acd9d366b9e02d45dafb52f9af82c", 
-  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.KUkB9qKHd0UFhLqAYfyXhAHaEK%3Fpid%3DApi&f=1&ipt=bccc0ab759e3d6a1cd49622978cf484302ca94b905b23679770026cc341f8a3d&ipo=images"  
+  "https://tse3.mm.bing.net/th/id/OIP.M-zQRPiEjhNVvpOd1IJPNQHaEK?pid=ImgDet&rs=1",
+  "https://tse2.mm.bing.net/th/id/OIP.RD2uM5G7XZBx2ZqTGrxOAAHaEK?pid=ImgDet&rs=1",
+  "https://tse2.mm.bing.net/th/id/OIP.5xVv9FU1ZMXUjO8RCY2YMAHaHZ?pid=ImgDet&rs=1",
+  "https://tse2.mm.bing.net/th/id/OIP.KUkB9qKHd0UFhLqAYfyXhAHaEK?pid=ImgDet&rs=1",
+  "https://tse2.mm.bing.net/th/id/OIP.9lq3p1v8l7v3X3p0pQHaEK?pid=ImgDet&rs=1"
 ];
 
 function ajouterImage() {
-  const btn = document.getElementById("btn");
-  const btnRect = btn.getBoundingClientRect();
+  clics++;
+  document.getElementById("compteur").textContent = "Clics : " + clics;
 
-  
   const son = sons[Math.floor(Math.random() * sons.length)];
   new Audio(son).play();
 
-  
   const img = document.createElement("img");
   img.src = images[Math.floor(Math.random() * images.length)];
   img.className = "img-random";
 
-  const imgWidth = 150 + Math.random() * 300;
-  const imgHeight = imgWidth;
-
+  const imgWidth = 120 + Math.random() * 220;
   img.style.width = imgWidth + "px";
-  img.style.height = imgHeight + "px";
 
   document.body.appendChild(img);
 
-  let x, y;
-  let tries = 0;
-
-  do {
-    x = Math.random() * Math.max(0, window.innerWidth - imgWidth);
-    y = Math.random() * Math.max(0, window.innerHeight - imgHeight);
-
-    tries++;
-    if (tries > 50) break;
-
-  } while (
-    x < btnRect.right + 50 &&
-    x + imgWidth > btnRect.left - 50 &&
-    y < btnRect.bottom + 50 &&
-    y + imgHeight > btnRect.top - 50
-  );
+  const topSafeZone = 140; // zone protégée pour les boutons
+  let x = Math.random() * (window.innerWidth - imgWidth);
+  let y = topSafeZone + Math.random() * (window.innerHeight - topSafeZone - imgWidth);
 
   img.style.left = x + "px";
   img.style.top = y + "px";
+
+  if (graviteActive) {
+    tomberAuSol(img, imgWidth);
+  }
+}
+
+function tomberAuSol(img, imgWidth) {
+  const bottom = window.innerHeight - imgWidth;
+  // on garde la position X, on anime juste le top vers le bas
+  requestAnimationFrame(() => {
+    img.style.top = bottom + "px";
+  });
+}
+
+function modeFolie() {
+  if (!folieActive) {
+    folieActive = true;
+    intervalFolie = setInterval(() => {
+      for (let i = 0; i < 5; i++) {
+        ajouterImage();
+      }
+    }, 100);
+    document.getElementById("btn-folie").textContent = "STOP";
+  } else {
+    folieActive = false;
+    clearInterval(intervalFolie);
+    document.getElementById("btn-folie").textContent = "FOLIE";
+  }
+}
+
+function modeGravite() {
+  graviteActive = !graviteActive;
+
+  if (graviteActive) {
+    document.getElementById("btn-gravite").textContent = "GRAVITÉ ON";
+    document.querySelectorAll(".img-random").forEach(img => {
+      const imgWidth = img.getBoundingClientRect().width;
+      tomberAuSol(img, imgWidth);
+    });
+  } else {
+    document.getElementById("btn-gravite").textContent = "GRAVITÉ";
+    // on ne remonte pas les images : elles restent au sol
+  }
 }
 </script>
 
