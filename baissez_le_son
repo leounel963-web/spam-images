@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<title>Images aléatoires</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    background-color: #AAAAAA;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  #btn {
+    font-size: 40px;
+    padding: 20px;
+    font-family: MV Boli, Verdana, sans-serif;
+    position: relative;
+    z-index: 10;
+  }
+
+  .img-random {
+    position: absolute;
+  }
+</style>
+
+</head>
+<body>
+
+<div style="text-align:center; margin-top:40px;">
+  <button id="btn" onclick="ajouterImage()">AAAAAAAAAAAAAAA</button>
+</div>
+
+<script>
+
+const sons = [
+  "https://www.myinstants.com/media/sounds/vine-boom.mp3",
+  "https://www.myinstants.com/media/sounds/movie_1.mp3", 
+  "https://www.myinstants.com/media/sounds/goofy-ahh-sound.mp3",
+  "https://www.myinstants.com/media/sounds/bonk-sound-effect.mp3",
+  "https://www.myinstants.com/media/sounds/metal-pipe-falling-sound-effect.mp3"
+];
+
+
+const images = [
+  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.M-zQRPiEjhNVvpOd1IJPNQHaEK%3Fpid%3DApi&f=1&ipt=269048561024604948f161cc7c03b305db944845a42fbc9dc219d02f48ba8b93&ipo=images", 
+  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.RD2uM5G7XZBx2ZqTGrxOAAHaEK%3Fpid%3DApi&f=1&ipt=a64968a7e132368ab7ea7e1e630d93568a2f4347a4e6dc179d63fa04bb6c4bce&ipo=images", 
+  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.5xVv9FU1ZMXUjO8RCY2YMAHaHZ%3Fpid%3DApi&f=1&ipt=9acea44f8a1dbe18f54c5815caf583a9b4ff943efcb8493650fb1a0b2441ba44&ipo=images",
+  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftx-br-pic.kwai.net%2Fkimg%2FEKzM1y8qmgEKAnMzEg1waG90by1vdmVyc2VhGoQBdXBpYy8yMDIyLzA5LzIxLzIyL0JNakF5TWpBNU1qRXlNak01TWpGZk1UVXdNREF4TXpZME16RXlOamszWHpFMU1ERXdNRGcxTnpNek9UUTVNbDh5WHpNPV9vZmZuX0JhMTc0YWZlZDk2MjBlNzE1MDdlODRhOGQyZGYwYmUyYS53ZWJw.webp&f=1&nofb=1&ipt=82017e68e4ac37d2baea1f562b614759fc6acd9d366b9e02d45dafb52f9af82c", 
+  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.KUkB9qKHd0UFhLqAYfyXhAHaEK%3Fpid%3DApi&f=1&ipt=bccc0ab759e3d6a1cd49622978cf484302ca94b905b23679770026cc341f8a3d&ipo=images"  
+];
+
+function ajouterImage() {
+  const btn = document.getElementById("btn");
+  const btnRect = btn.getBoundingClientRect();
+
+  
+  const son = sons[Math.floor(Math.random() * sons.length)];
+  new Audio(son).play();
+
+  
+  const img = document.createElement("img");
+  img.src = images[Math.floor(Math.random() * images.length)];
+  img.className = "img-random";
+
+  const imgWidth = 150 + Math.random() * 300;
+  const imgHeight = imgWidth;
+
+  img.style.width = imgWidth + "px";
+  img.style.height = imgHeight + "px";
+
+  document.body.appendChild(img);
+
+  let x, y;
+  let tries = 0;
+
+  do {
+    x = Math.random() * Math.max(0, window.innerWidth - imgWidth);
+    y = Math.random() * Math.max(0, window.innerHeight - imgHeight);
+
+    tries++;
+    if (tries > 50) break;
+
+  } while (
+    x < btnRect.right + 50 &&
+    x + imgWidth > btnRect.left - 50 &&
+    y < btnRect.bottom + 50 &&
+    y + imgHeight > btnRect.top - 50
+  );
+
+  img.style.left = x + "px";
+  img.style.top = y + "px";
+}
+</script>
+
+</body>
+</html>
